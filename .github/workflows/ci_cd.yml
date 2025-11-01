@@ -19,7 +19,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.9"
+          python-version: "3.11"
 
       # Install Python dependencies
       - name: Install Python dependencies
@@ -29,6 +29,13 @@ jobs:
 
       # Step 3: Lint Python code
       #### 
+      - name: Lint Python code
+        run: |
+          if [ -f .flake8 ] || [ -f setup.cfg ] || [ -f tox.ini ] || [ -f .pep8 ]; then
+            flake8 .
+          else
+            echo "No lint configuration found, skipping linting."
+          fi
 
       # Step 4: Run Python tests
       ####
@@ -46,20 +53,20 @@ jobs:
         - name: List repository files
           run: ls -al
 
-    Step 7: Build docker image 
-    Go to dockerhub.com
-    Create a new repository - backend_flask
-    Create a new access token - <access_token>
-    Note down your username - <username>
-    Add the following secrets to your GitHub repository - Environment (name = TEST)
-    add the Environment name to the deploy job above (important step)
-    https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions
-    ### 
+    # # Step 7: Build docker image 
+    # # Go to dockerhub.com
+    # # Create a new repository - backend_flask
+    # # Create a new access token - <access_token>
+    # # Note down your username - <username>
+    # # Add the following secrets to your GitHub repository - Environment (name = TEST)
+    # # add the Environment name to the deploy job above (important step)
+    # # https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions
+    # ### 
 
-    Step 8: # Log in to Docker Hub
-    ### 
+    # Step 8: # Log in to Docker Hub
+    # ### 
 
 
-    Step 8: Push docker image to dockerhub
-    ###
+    # Step 8: Push docker image to dockerhub
+    # ###
     
