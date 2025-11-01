@@ -28,7 +28,6 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       # Step 3: Lint Python code
-      #### 
       - name: Lint Python code
         run: |
           if [ -f .flake8 ] || [ -f setup.cfg ] || [ -f tox.ini ] || [ -f .pep8 ]; then
@@ -38,7 +37,6 @@ jobs:
           fi
 
       # Step 4: Run Python tests
-      ####
       - name: Run Python tests
         run: |
           if [ -f pytest.ini ] || ls tests; then
@@ -52,28 +50,35 @@ jobs:
     needs: [backend_flask]
     runs-on: ubuntu-latest
     # Important step - add your environment name
-    # environment: PROD
+    environment: TEST
     steps:
-        - uses: actions/checkout@v3
+        - uses: actions/checkout@v4
 
         # Optional: List repository files to verify the docker-compose file exists
         - name: List repository files
-          run: ls -al
+          run: ls -la
 
-    # # Step 7: Build docker image 
-    # # Go to dockerhub.com
-    # # Create a new repository - backend_flask
-    # # Create a new access token - <access_token>
-    # # Note down your username - <username>
-    # # Add the following secrets to your GitHub repository - Environment (name = TEST)
-    # # add the Environment name to the deploy job above (important step)
-    # # https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions
-    # ### 
+    # Step 7: Build docker image 
+    # Go to dockerhub.com
+    # Create a new repository - backend_flask
+    # Create a new access token - <access_token>
+    # Note down your username - <username>
+    # Add the following secrets to your GitHub repository - Environment (name=TEST)
+    # add the Environment name to the deploy job above (important step)
+    # https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions
+        - name: Build Docker Image
+          run: |
+            docker build -t "${{ secrets.DOCKERHUB_USERNAME }}/backend_flask:latest" .
 
     # Step 8: # Log in to Docker Hub
-    # ### 
-
+        - name: Log in to Docker Hub
+          env:
+            DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+            DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          run: |
+            echo "${DOCKERHUB_TOKEN}" | docker login --username "${DOCKERHUB_USERNAME}" --password-stdin
 
     # Step 8: Push docker image to dockerhub
-    # ###
-    
+        - name: Push Docker Image
+          run: |
+            docker push  "${{ secrets.DOCKERHUB_USERNAME }}/backend_flask:latest"
